@@ -12,7 +12,7 @@ function TodoReducer(state = initState, action) {
                 todoList: [
                     ...state.todoList,
                     {
-                        id: state.count,
+                        id: action.payload.id,
                         name: action.payload.name,
                         completed: action.payload.completed,
                         priority: action.payload.priority,
@@ -34,22 +34,21 @@ function TodoReducer(state = initState, action) {
 
         case 'DEL_TODO':
             console.log(action);
+
             state.todoList.splice(action.payload, 1);
             state.count = state.count - 1;
 
-            return state;
-
+            return { ...state };
         case 'EDIT_TODO':
+            console.log(action);
             state.editIndex = action.payload.index;
-
             state.todoList.map((todo) => {
                 if (todo.id === state.editIndex) {
                     todo.name = action.payload.text;
                 }
                 return todo;
             });
-
-            return state;
+            return { ...state };
 
         case 'CANCEL_EDIT':
             state.editIndex = null;

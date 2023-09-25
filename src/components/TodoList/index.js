@@ -1,8 +1,9 @@
 import { Col, Row, Space, Button, Select, Tag, Input } from 'antd';
 import Todo from '../Todo';
 import { useDispatch, useSelector } from 'react-redux';
-import { add, updateStatus, todoListRemainSelector } from '../../redux';
+import { add, del, edit, updateStatus, todoListRemainSelector } from '../../redux';
 import { useState, useRef } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function TodoList() {
     const [inputValue, setInputValue] = useState('');
@@ -18,6 +19,7 @@ export default function TodoList() {
         if (inputValue !== '') {
             dispatch(
                 add({
+                    id: uuidv4(),
                     name: inputValue,
                     priority: priority,
                     completed: false,
@@ -44,18 +46,31 @@ export default function TodoList() {
         dispatch(updateStatus(value));
     };
 
+    // Handle Del
+    const handleDel = (value) => {
+        dispatch(del(value));
+    };
+
+    const handleEdit = (value) => {
+        console.log(value);
+        dispatch(edit(value));
+    };
+
     return (
         <Row style={{ height: 'calc(100% - 40px)' }}>
             <Col span={24} style={{ height: 'calc(100% - 40px)', overflowY: 'auto' }}>
                 {list &&
-                    list.map((item) => (
+                    list.map((item, index) => (
                         <Todo
                             key={item.id}
                             getCheckBox={getCheckBox}
-                            index={item.id}
+                            id={item.id}
+                            index={index}
                             name={item.name}
                             priority={item.priority}
                             completed={item.completed}
+                            handleDel={handleDel}
+                            handleEdit={handleEdit}
                         />
                     ))}
             </Col>

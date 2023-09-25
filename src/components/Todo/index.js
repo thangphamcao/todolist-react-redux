@@ -1,7 +1,7 @@
 import { Row, Tag, Checkbox, Button, Modal, Input } from 'antd';
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { del, edit, cancel } from '../../redux';
+import { cancel } from '../../redux';
 
 const priorityColorMapping = {
     High: 'red',
@@ -9,7 +9,7 @@ const priorityColorMapping = {
     Low: 'gray',
 };
 
-export default function Todo({ name, priority, getCheckBox, index, completed }) {
+export default function Todo({ name, priority, getCheckBox, index, completed, handleDel, handleEdit, id }) {
     const [checked, setChecked] = useState(completed);
     const [inputEdit, setInputEdit] = useState(name);
 
@@ -20,24 +20,25 @@ export default function Todo({ name, priority, getCheckBox, index, completed }) 
 
     const toggleCheckbox = () => {
         setChecked(!checked);
-        getCheckBox(index);
+        getCheckBox(id);
     };
 
     const handleEditTODO = () => {
-        dispatch(
-            edit({
-                index: index,
-                text: inputEdit,
-            }),
-        );
+        let data = {
+            index: id,
+            text: inputEdit,
+        };
+        handleEdit(data);
+
+        dispatch(cancel());
         setModalText('Updating...');
         setTimeout(() => {
             setOpen(false);
             setModalText('');
-        }, 2000);
+        }, 1500);
     };
+
     const handleCancel = () => {
-        dispatch(cancel());
         setOpen(false);
     };
 
@@ -46,7 +47,7 @@ export default function Todo({ name, priority, getCheckBox, index, completed }) 
     };
 
     const handleDelete = () => {
-        dispatch(del(index));
+        handleDel(index);
         setModalText('Deleting...');
         setTimeout(() => {
             setOpen(false);
